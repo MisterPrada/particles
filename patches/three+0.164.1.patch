@@ -1,0 +1,26 @@
+diff --git a/node_modules/three/build/three.module.js b/node_modules/three/build/three.module.js
+index 8c431f6..9e1a9f1 100644
+--- a/node_modules/three/build/three.module.js
++++ b/node_modules/three/build/three.module.js
+@@ -29201,7 +29201,7 @@ class WebGLRenderer {
+ 			} );
+ 
+ 			renderStateStack.pop();
+-			currentRenderState = null;
++			//currentRenderState = null;
+ 
+ 			return materials;
+ 
+diff --git a/node_modules/three/src/renderers/WebGLRenderer.js b/node_modules/three/src/renderers/WebGLRenderer.js
+index 6fe5a52..b42edaf 100644
+--- a/node_modules/three/src/renderers/WebGLRenderer.js
++++ b/node_modules/three/src/renderers/WebGLRenderer.js
+@@ -988,7 +988,7 @@ class WebGLRenderer {
+ 			} );
+ 
+ 			renderStateStack.pop();
+-			currentRenderState = null;
++			//currentRenderState = null;
+ 
+ 			return materials;
+ 

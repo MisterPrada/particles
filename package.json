@@ -1,0 +1,27 @@
+{
+  "name": "project-name",
+  "author": "Mister&Prada",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-basic-ssl": "^1.1.0",
+    "gsap": "^3.12.5",
+    "lil-gui": "^0.19.2",
+    "min-signal": "^1.0.2",
+    "normalize-wheel": "^1.0.1",
+    "patch-package": "^8.0.0",
+    "postprocessing": "^6.35.5",
+    "simplex-noise": "^4.0.1",
+    "stats.js": "^0.17.0",
+    "three": "^0.164.1",
+    "vite": "^4.3.1",
+    "vite-plugin-glsl": "^1.2.1",
+    "vite-plugin-terminal": "^1.2.0"
+  }
+}

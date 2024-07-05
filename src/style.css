@@ -1,0 +1,47 @@
+*
+{
+    margin: 0;
+    padding: 0;
+
+    -ms-touch-action: none;
+    touch-action: none;
+}
+
+html,
+body
+{
+    overflow: hidden;
+    background-color: black;
+}
+
+.webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+}
+
+
+/********************* Gizmo *********************/
+gizmo-helper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 100000;
+}
+
+gizmo-helper:hover {
+    background: rgba(255, 255, 255, .2);
+    border-radius: 100%;
+    cursor: pointer;
+}
+/********************* End Gizmo *********************/
+
+#preloader {
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+}
