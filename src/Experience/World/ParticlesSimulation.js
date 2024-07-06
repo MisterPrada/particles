@@ -6,6 +6,7 @@ import { GPUComputationRenderer } from "three/addons/misc/GPUComputationRenderer
 import gpgpuParticlesShader from "../Shaders/Gpgpu/particles.glsl";
 import gpgpuParticlesVelocityShader from "../Shaders/Gpgpu/particlesVelocity.glsl";
 import { createNoise4D } from 'simplex-noise';
+import { MathUtils } from "three";
 
 export default class ParticlesSimulation {
     experience = Experience.getInstance();
@@ -156,7 +157,7 @@ export default class ParticlesSimulation {
         this.currPositionsTexture = this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.particlesVariable).texture
 
         this.gpgpu.particlesVelocityVariable.material.uniforms.uTime.value = this.time.elapsed
-        this.gpgpu.particlesVelocityVariable.material.uniforms.uDeltaTime.value = deltaTime
+        this.gpgpu.particlesVelocityVariable.material.uniforms.uDeltaTime.value = MathUtils.damp(this.gpgpu.particlesVelocityVariable.material.uniforms.uDeltaTime.value, deltaTime, 9, deltaTime)
         this.gpgpu.particlesVelocityVariable.material.uniforms.uPrevPositions.value = this.prevPositionsTexture
         this.gpgpu.particlesVelocityVariable.material.uniforms.uCurrPositions.value = this.currPositionsTexture
 

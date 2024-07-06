@@ -41,6 +41,9 @@ export default class Particles {
         new THREE.Color( 0x2062ff )
     ];
 
+    uSampleRadius = 10.0
+    uVelocityScale = 0.4
+
     displacement = {};
 
     constructor() {
@@ -136,7 +139,9 @@ export default class Particles {
                 uSolarSystemTexture: new THREE.Uniform(),
                 uScroll: new THREE.Uniform( 0 ),
                 uTotalSections: new THREE.Uniform( this.sectionCount ),
-                uNormalizePoints: new THREE.Uniform( this.normalizePoints )
+                uNormalizePoints: new THREE.Uniform( this.normalizePoints ),
+                uSampleRadius: new THREE.Uniform( this.uSampleRadius ),
+                uVelocityScale: new THREE.Uniform( this.uVelocityScale ),
             },
             //blending: THREE.AdditiveBlending,
             transparent: true,
@@ -259,13 +264,27 @@ export default class Particles {
                 this.changeColors();
             } );
 
-        // add 0 -> 1
+        // add uSampleRadius
         this.debugFolder
-            .add( this, "normalizeScrollY" )
+            .add( this, "uSampleRadius" )
             .min( 0 )
-            .max( 1 )
+            .max( 30 )
             .step( 0.001 )
-            .name( "Normalize Scroll Y" );
+            .name( "Sample Radius" )
+            .onChange( () => {
+                this.points.material.uniforms.uSampleRadius.value = this.uSampleRadius;
+            } );
+
+        // add uVelocityScale
+        this.debugFolder
+            .add( this, "uVelocityScale" )
+            .min( 0 )
+            .max( 2 )
+            .step( 0.001 )
+            .name( "Velocity Scale" )
+            .onChange( () => {
+                this.points.material.uniforms.uVelocityScale.value = this.uVelocityScale;
+            } );
     }
 
     changeColors() {
