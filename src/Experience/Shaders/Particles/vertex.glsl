@@ -16,6 +16,7 @@ varying vec3 vColor;
 varying vec3 vBary;
 varying float vSize;
 varying vec2 vParticlesUv;
+varying mat4 vViewMatrix;
 
 
 attribute vec3 color;
@@ -83,7 +84,7 @@ void main() {
     // Final position
     //gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
     //vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-    vec4 modelPosition = modelMatrix * vec4(vec3(0), 1.0);
+    vec4 modelPosition = modelMatrix * vec4(particleSim.xyz, 1.0);
     vec4 viewPosition = viewMatrix * modelPosition;
 
 
@@ -92,7 +93,7 @@ void main() {
     float sizeOut = 1.0 - smoothstep(0.7, 1.0, particleSim.a);
     float size = min(sizeIn, sizeOut);
 
-    viewPosition.xyz += position / 25.0 * uSize * 20.0;// * size * a_size * 10.0;
+    viewPosition.xyz += position / 25.0 * uSize * size * a_size * 10.0;
     vec4 projectedPosition = projectionMatrix * viewPosition;
 
 
@@ -123,4 +124,5 @@ void main() {
     vColor = color;
     vBary = a_bary;
     vSize = size;
+    vViewMatrix = viewMatrix;
 }

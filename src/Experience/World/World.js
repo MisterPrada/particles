@@ -48,7 +48,7 @@ export default class World {
         // Setup
         //this.cube = new ExampleClass()
         this.particles = new Particles()
-        //this.particlesSimulation = new ParticlesSimulation()
+        this.particlesSimulation = new ParticlesSimulation()
         this.environment = new Environment()
 
         // Add debug helpers

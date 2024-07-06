@@ -25,7 +25,7 @@ export default class Particles {
     resources = experience.resources;
     container = new THREE.Group();
 
-    particlesCount = 1;
+    particlesCount = 1000;
     normalizeScrollY = 0;
     normalizeScrollYTarget = 0;
     normalizePoints = [ 0.0, 0.3, 0.6 ];
@@ -105,7 +105,7 @@ export default class Particles {
 
         //geometry.setAttribute( "position", new THREE.BufferAttribute( dogParticlesModel.geometry.attributes.position.array, 3 ) );
         geometry.setAttribute( "position", new THREE.Float32BufferAttribute( triangleVert, 3 ) );
-        geometry.setAttribute( "a_uv", new THREE.Float32BufferAttribute( uvs, 3 ) );
+        //geometry.setAttribute( "a_uv", new THREE.Float32BufferAttribute( uvs, 3 ) );
         geometry.setAttribute( "a_bary", new THREE.Float32BufferAttribute( baryCoords, 3 ) );
         geometry.setAttribute( "color", new THREE.InstancedBufferAttribute( colors, 3 ) );
         geometry.setAttribute( "a_size", new THREE.InstancedBufferAttribute( a_size, 1 ) );
@@ -139,10 +139,11 @@ export default class Particles {
                 uNormalizePoints: new THREE.Uniform( this.normalizePoints )
             },
             //blending: THREE.AdditiveBlending,
-            //transparent: true,
+            transparent: true,
             side: THREE.FrontSide,
             forceSinglePass: true,
-            //depthWrite: false,
+            depthWrite: false,
+            //alphaTest: 0.5,
             //depthTest: false,
         } );
 

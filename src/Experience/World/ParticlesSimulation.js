@@ -140,7 +140,7 @@ export default class ParticlesSimulation {
 
 
         //this.debug.createDebugTexture( this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.particlesVariable).texture )
-        this.debug.createDebugTexture( this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.particlesVelocityVariable).texture )
+        //this.debug.createDebugTexture( this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.particlesVelocityVariable).texture )
 
         //this.debug.createDebugTexture( this.resources.items.displacementTexture )
     }
@@ -149,7 +149,6 @@ export default class ParticlesSimulation {
         // GPGPU Update
         this.gpgpu.particlesVariable.material.uniforms.uTime.value = this.time.elapsed
         this.gpgpu.particlesVariable.material.uniforms.uDeltaTime.value = deltaTime
-        this.gpgpu.computation.compute()
 
         this.points.material.uniforms.uParticlesTexture.value = this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.particlesVariable).texture
 
@@ -162,6 +161,8 @@ export default class ParticlesSimulation {
         this.gpgpu.particlesVelocityVariable.material.uniforms.uCurrPositions.value = this.currPositionsTexture
 
         this.points.material.uniforms.uParticlesVelocityTexture.value = this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.particlesVelocityVariable).texture
+
+        this.gpgpu.computation.compute()
 
         //particles.material.uniforms.uParticlesTexture.value = gpgpu.computation.getCurrentRenderTarget(gpgpu.particlesVariable).texture
     }
