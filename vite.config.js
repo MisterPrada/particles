@@ -34,9 +34,9 @@ export default {
     [
         glsl(),
         basicSsl(),
-        Terminal({
-            console: 'terminal',
-            output: ['terminal', 'console']
-        })
+        // Terminal({
+        //     console: 'terminal',
+        //     output: ['terminal', 'console']
+        // })
     ]
 }
