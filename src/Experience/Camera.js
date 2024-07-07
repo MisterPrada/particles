@@ -24,7 +24,7 @@ export default class Camera
     setInstance()
     {
         this.instance = new THREE.PerspectiveCamera(25, this.sizes.width / this.sizes.height, 0.1, 300)
-        this.defaultCameraPosition = new THREE.Vector3(-0.5, 1.5, 7);
+        this.defaultCameraPosition = new THREE.Vector3(-0.5, 1.5, 3);
 
         this.instance.position.copy(this.defaultCameraPosition)
         this.instance.lookAt(new THREE.Vector3(0, 0, 0));

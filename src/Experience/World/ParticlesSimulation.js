@@ -87,7 +87,7 @@ export default class ParticlesSimulation {
         gpgpu.particlesVariable.material.uniforms.uDeltaTime = new THREE.Uniform(0)
         gpgpu.particlesVariable.material.uniforms.uBase = new THREE.Uniform(baseParticlesTexture)
         gpgpu.particlesVariable.material.uniforms.uFlowFieldInfluence = new THREE.Uniform(0.5)
-        gpgpu.particlesVariable.material.uniforms.uFlowFieldStrength = new THREE.Uniform(0.222)
+        gpgpu.particlesVariable.material.uniforms.uFlowFieldStrength = new THREE.Uniform(2.522)
         gpgpu.particlesVariable.material.uniforms.uFlowFieldFrequency = new THREE.Uniform(0.5)
 
         // Velocity variable

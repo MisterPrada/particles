@@ -15,8 +15,8 @@ import sources from './sources.js'
 import gsap from "gsap";
 import MotionPathPlugin from "gsap/MotionPathPlugin";
 import State from './State.js'
-import PostProcess from './Utils/PostProcess.js'
-//import PostProcess from './Utils/PostProcessExternal.js'
+//import PostProcess from './Utils/PostProcess.js'
+import PostProcess from './Utils/PostProcessExternal.js'
 
 export default class Experience extends EventEmitter {
 

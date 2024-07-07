@@ -32,6 +32,7 @@ export default class PostProcess {
     timeline = experience.time.timeline;
     container = new THREE.Group();
 
+
     constructor( renderer ) {
         this.renderer = renderer
 
@@ -40,85 +41,45 @@ export default class PostProcess {
     }
 
     setComposer() {
-        // /**
-        //  * Passes
-        //  */
-        // // Render pass
-        // this.renderPass = new RenderPass( this.scene, this.camera )
-        //
-        // this.bloomComposer = this._bloomComposer()
-        // this.mixPass = this._mixPass()
-        // this.outputPass = new OutputPass()
-        // //this.motionBlurPass = this._motionBlurPass()
-        // //this.bokehPass = this._bokehPass()
-        //
-        // this.renderTarget = this.fbo.createRenderTarget( this.sizes.width, this.sizes.height, false, false, 0 )
-        // this.composer = new EffectComposer( this.renderer, this.renderTarget )
-        // this.composer.setSize( this.sizes.width, this.sizes.height )
-        // this.composer.setPixelRatio( this.sizes.pixelRatio )
-        //
-        // this.composer.addPass( this.renderPass )
-        // this.composer.addPass( this.mixPass )
-        // this.composer.addPass( this.unrealBloomPass )
-        // //this.composer.addPass( this.motionBlurPass )
-        // //this.composer.addPass( this.bokehPass )
-        // this.composer.addPass( this.outputPass )
-
-
-        const composer = this.composer = new EffectComposer( this.renderer );
-
-        composer.addPass( new RenderPass( this.scene, this.camera ) );
-        // composer.addPass( new EffectPass( this.camera, new BloomEffect(
-        //     {
-        //         blendFunction: BlendFunction.ADD,
-        //         mipmapBlur: true,
-        //         luminanceThreshold: 0.001,
-        //         luminanceSmoothing: 0.2,
-        //         intensity: 100.0,
-        //         radius: 0.1
-        //     }
-        // ) ) );
-
-        this.depthOfFieldEffect = new DepthOfFieldEffect( this.camera, {
-            focusDistance: 0.0,
-            focalLength: 0.048,
-            bokehScale: 2.0,
-            height: 240
+        const composer = this.composer = new EffectComposer( this.renderer, {
+            //frameBufferType: THREE.HalfFloatType,
+            powerPreference: "high-performance",
+            // antialias: false,
+            // stencil: false,
+            // depth: false
         });
 
-        this.cocMaterial = this.depthOfFieldEffect.circleOfConfusionMaterial;
+        this.bloomPass = this._bloomPass();
 
-        this.params = {
-            "coc": {
-                "edge blur kernel": this.depthOfFieldEffect.blurPass.kernelSize,
-                "focus": this.cocMaterial.uniforms.focusDistance.value,
-                "focal length": this.cocMaterial.uniforms.focalLength.value
-            },
-            "resolution": this.depthOfFieldEffect.resolution.height,
-            "bokeh scale": this.depthOfFieldEffect.bokehScale,
-        };
+        composer.addPass( new RenderPass( this.scene, this.camera ) );
+        composer.addPass( new EffectPass( this.camera, this.bloomPass) );
 
-        const effectPass = new EffectPass(
-            this.camera,
-            this.depthOfFieldEffect
-        );
+        // this.depthOfFieldEffect = new DepthOfFieldEffect( this.camera, {
+        //     focusDistance: 0.0,
+        //     focalLength: 0.048,
+        //     bokehScale: 2.0,
+        //     height: 240
+        // });
+
+        // this.cocMaterial = this.depthOfFieldEffect.circleOfConfusionMaterial;
+        //
+        // this.params = {
+        //     "coc": {
+        //         "edge blur kernel": this.depthOfFieldEffect.blurPass.kernelSize,
+        //         "focus": this.cocMaterial.uniforms.focusDistance.value,
+        //         "focal length": this.cocMaterial.uniforms.focalLength.value
+        //     },
+        //     "resolution": this.depthOfFieldEffect.resolution.height,
+        //     "bokeh scale": this.depthOfFieldEffect.bokehScale,
+        // };
+        //
+        // const effectPass = new EffectPass(
+        //     this.camera,
+        //     this.depthOfFieldEffect
+        // );
 
         //composer.addPass( effectPass );
 
-    }
-
-    _bloomComposer() {
-
-        this.renderTargetBloom = this.fbo.createRenderTarget( this.sizes.width, this.sizes.height, false, false, 0 )
-
-        this.unrealBloomPass = this._bloomPass()
-
-        const bloomComposer = new EffectComposer( this.renderer, this.renderTargetBloom );
-        bloomComposer.renderToScreen = false;
-        bloomComposer.addPass( this.renderPass );
-        bloomComposer.addPass( this.unrealBloomPass )
-
-        return bloomComposer
     }
 
     _bokehPass() {
@@ -134,57 +95,26 @@ export default class PostProcess {
 
 
     _bloomPass() {
-        const unrealBloomPass = new UnrealBloomPass(
-            new THREE.Vector2( this.sizes.width, this.sizes.height ),
-            this.state.unrealBloom.strength,
-            this.state.unrealBloom.radius,
-            this.state.unrealBloom.threshold
+        this.bloomParams = {
+            "intensity": 6.,
+            "radius": 0.493,
+            "luminance": {
+                "filter": true,
+                "threshold": 0.0374,
+                "smoothing": 1.0,
+            }
+        };
+
+        return new BloomEffect(
+            {
+                blendFunction: BlendFunction.ADD,
+                mipmapBlur: this.bloomParams.luminance.filter,
+                luminanceThreshold: this.bloomParams.luminance.threshold,
+                luminanceSmoothing: this.bloomParams.luminance.smoothing,
+                intensity: this.bloomParams.intensity,
+                radius: this.bloomParams.radius
+            }
         )
-
-        unrealBloomPass.enabled = this.state.unrealBloom.enabled
-        unrealBloomPass.renderToScreen = false
-
-        unrealBloomPass.tintColor = {}
-        unrealBloomPass.tintColor.value = '#000000'
-        unrealBloomPass.tintColor.instance = new THREE.Color( unrealBloomPass.tintColor.value )
-
-        unrealBloomPass.compositeMaterial.uniforms.uTintColor = { value: unrealBloomPass.tintColor.instance }
-        unrealBloomPass.compositeMaterial.uniforms.uTintStrength = { value: 0.15 }
-        //unrealBloomPass.compositeMaterial.fragmentShader = CompositeMaterialFragment
-
-        return unrealBloomPass
-    }
-
-    _mixPass() {
-        const mixPass = new ShaderPass(
-            new THREE.ShaderMaterial( {
-                uniforms: {
-                    baseTexture: { value: null },
-                    bloomTexture: { value: this.bloomComposer.renderTarget2.texture }
-                },
-                vertexShader: BloomVertex,
-                fragmentShader: BloomFragment,
-                defines: {}
-            } ), 'baseTexture'
-        );
-        mixPass.needsSwap = true;
-
-        return mixPass
-    }
-
-    _motionBlurPass() {
-        const motionBlurPass = new MotionBlurPass( this.scene, this.camera );
-
-        motionBlurPass.enabled = this.state.motionBlur.enabled;
-        motionBlurPass.samples = this.state.motionBlur.samples;
-        motionBlurPass.expandGeometry = this.state.motionBlur.expandGeometry;
-        motionBlurPass.interpolateGeometry = this.state.motionBlur.interpolateGeometry;
-        motionBlurPass.renderCameraBlur = this.state.motionBlur.cameraBlur;
-        motionBlurPass.smearIntensity = this.state.motionBlur.smearIntensity;
-        motionBlurPass.jitter = this.state.motionBlur.jitter;
-        motionBlurPass.jitterStrategy = this.state.motionBlur.jitterStrategy;
-
-        return motionBlurPass;
     }
 
     resize() {
@@ -201,53 +131,77 @@ export default class PostProcess {
         if ( this.debug.panel ) {
             const PostProcessFolder = this.debug.panel.addFolder( 'PostProcess' )
             // PostProcessFolder.close()
-            // const bloomFolder = PostProcessFolder.addFolder( 'UnrealBloomPass' )
-            // bloomFolder.close()
-            //
-            // bloomFolder.add( this.unrealBloomPass, 'enabled' ).name( 'Enabled' )
-            //     .onChange( () => {
-            //         this.mixPass.enabled = this.unrealBloomPass.enabled
-            //     } )
-            // bloomFolder.add( this.unrealBloomPass, 'strength' ).min( 0 ).max( 5 ).step( 0.001 ).name( 'Strength' )
-            // bloomFolder.add( this.unrealBloomPass, 'radius' ).min( -2 ).max( 1 ).step( 0.001 ).name( 'Radius' )
-            // bloomFolder.add( this.unrealBloomPass, 'threshold' ).min( 0 ).max( 1 ).step( 0.001 ).name( 'Threshold' )
-            // bloomFolder.addColor( this.unrealBloomPass.tintColor, 'value' ).name( 'Tint Color' ).onChange( () => {
-            //     this.unrealBloomPass.tintColor.instance.set( this.unrealBloomPass.tintColor.value )
-            // } )
-            // bloomFolder.add( this.unrealBloomPass.compositeMaterial.uniforms.uTintStrength, 'value' ).name( 'Tint Strength' ).min( 0 ).max( 1 ).step( 0.001 )
-            //
-            const bokehFolder = PostProcessFolder.addFolder( 'Bokeh' );
+            const bloomFolder = PostProcessFolder.addFolder( 'BloomPass' )
+            bloomFolder.close()
 
-            bokehFolder.add(this.params, "resolution", [240, 360, 480, 720, 1080]).onChange((value) => {
 
-                this.depthOfFieldEffect.resolution.height = Number(value);
+            // blendFunction: BlendFunction.ADD,
+            //     mipmapBlur: true,
+            //     luminanceThreshold: 0.001,
+            //     luminanceSmoothing: 0.2,
+            //     intensity: 100.0,
+            //     radius: 0.1
 
+            bloomFolder.add(this.bloomParams.luminance, "filter").onChange((value) => {
+                this.bloomPass.mipmapBlurPass.enabled = value;
+            } );
+
+            bloomFolder.add(this.bloomParams, "intensity", 0.0, 200.0, 0.01).onChange( (value) => {
+                this.bloomPass.intensity = value;
             });
 
-            bokehFolder.add(this.params, "bokeh scale", 1.0, 5.0, 0.001).onChange((value) => {
-
-                this.depthOfFieldEffect.bokehScale = value;
-
+            bloomFolder.add(this.bloomParams, "radius", 0.0, 1.0, 0.001).onChange((value) => {
+                this.bloomPass.mipmapBlurPass.radius = Number(value);
             });
 
-            bokehFolder.add(this.params.coc, "edge blur kernel", KernelSize).onChange((value) => {
 
-                this.depthOfFieldEffect.blurPass.kernelSize = Number(value);
-
-            });
-
-            bokehFolder.add(this.params.coc, "focus", 0.0, 0.1, 0.001).onChange((value) => {
-
-                this.cocMaterial.uniforms.focusDistance.value = value;
-
-            });
-
-            bokehFolder.add(this.params.coc, "focal length", 0.0, 0.3, 0.0001)
+            bloomFolder.add(this.bloomParams.luminance, "threshold", 0.0, 1.0, 0.001)
                 .onChange((value) => {
-
-                    this.cocMaterial.uniforms.focalLength.value = value;
-
+                    this.bloomPass.luminanceMaterial.threshold = Number(value);
                 });
+
+            bloomFolder.add(this.bloomParams.luminance, "smoothing", 0.0, 1.0, 0.001)
+                .onChange((value) => {
+                    this.bloomPass.luminanceMaterial.smoothing = Number(value);
+                });
+
+
+
+
+
+
+            // const bokehFolder = PostProcessFolder.addFolder( 'Bokeh' );
+            //
+            // bokehFolder.add(this.params, "resolution", [240, 360, 480, 720, 1080]).onChange((value) => {
+            //
+            //     this.depthOfFieldEffect.resolution.height = Number(value);
+            //
+            // });
+            //
+            // bokehFolder.add(this.params, "bokeh scale", 1.0, 5.0, 0.001).onChange((value) => {
+            //
+            //     this.depthOfFieldEffect.bokehScale = value;
+            //
+            // });
+            //
+            // bokehFolder.add(this.params.coc, "edge blur kernel", KernelSize).onChange((value) => {
+            //
+            //     this.depthOfFieldEffect.blurPass.kernelSize = Number(value);
+            //
+            // });
+            //
+            // bokehFolder.add(this.params.coc, "focus", 0.0, 0.1, 0.001).onChange((value) => {
+            //
+            //     this.cocMaterial.uniforms.focusDistance.value = value;
+            //
+            // });
+            //
+            // bokehFolder.add(this.params.coc, "focal length", 0.0, 0.3, 0.0001)
+            //     .onChange((value) => {
+            //
+            //         this.cocMaterial.uniforms.focalLength.value = value;
+            //
+            //     });
 
             // const matChanger = ( ) => {
             //
@@ -334,13 +288,11 @@ export default class PostProcess {
     }
 
     productionRender() {
-        // if ( this.state.postprocessing ) {
-        //     this.bloomRender()
-        //
-        //     this.composer.render()
-        // } else {
-        //     this.renderer.render( this.scene, this.camera )
-        // }
+        if ( this.state.postprocessing ) {
+            this.composer.render()
+        } else {
+            this.renderer.render( this.scene, this.camera )
+        }
     }
 
     debugRender() {

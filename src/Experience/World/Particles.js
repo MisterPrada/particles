@@ -25,20 +25,20 @@ export default class Particles {
     resources = experience.resources;
     container = new THREE.Group();
 
-    particlesCount = 1000;
+    particlesCount = 10000;
     normalizeScrollY = 0;
     normalizeScrollYTarget = 0;
     normalizePoints = [ 0.0, 0.3, 0.6 ];
-    particleSize = 0.226;
+    particleSize = 0.053;
     sectionCount = 9;
     range = 1.0 / this.sectionCount;
     //lambda = this.experience.isMobile ? 9 : 3
     lambda = 9
 
     particlesColors = [
-        new THREE.Color( 0x260de3 ),
-        new THREE.Color( 0xff2de0 ),
-        new THREE.Color( 0x2062ff )
+        new THREE.Color( 0xfffffff ),
+        new THREE.Color( 0xfffffff ),
+        new THREE.Color( 0xfffffff )
     ];
 
     uSampleRadius = 10.0
@@ -144,7 +144,7 @@ export default class Particles {
                 uVelocityScale: new THREE.Uniform( this.uVelocityScale ),
             },
             //blending: THREE.AdditiveBlending,
-            transparent: true,
+            //transparent: true,
             side: THREE.FrontSide,
             forceSinglePass: true,
             depthWrite: false,
